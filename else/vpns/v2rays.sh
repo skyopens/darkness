@@ -144,9 +144,6 @@ v2ray_config() {
 }
 v2ray_port_config() {
 	case $v2ray_transport in
-	4 | 5)
-		tls_config
-		;;
 	*)
 		local random=$(shuf -i20001-65535 -n1)
 		while :; do
@@ -279,6 +276,49 @@ tls_config() {
 			error
 			;;
 		esac
+	done
+
+	while :; do
+		echo
+		echo -e "请输入一个 $magenta正确的域名$none，一定一定一定要正确，不！能！出！错！"
+		read -p "(例如：233blog.com): " domain
+		[ -z "$domain" ] && error && continue
+		echo
+		echo
+		echo -e "$yellow 你的域名 = $cyan$domain$none"
+		echo "----------------------------------------------------------------"
+		break
+	done
+	get_ip
+	echo
+	echo
+	echo -e "$yellow 请将 $magenta$domain$none $yellow解析到: $cyan$ip$none"
+	echo
+	echo -e "$yellow 请将 $magenta$domain$none $yellow解析到: $cyan$ip$none"
+	echo
+	echo -e "$yellow 请将 $magenta$domain$none $yellow解析到: $cyan$ip$none"
+	echo "----------------------------------------------------------------"
+	echo
+
+	while :; do
+
+		read -p "$(echo -e "(是否已经正确解析: [${magenta}Y$none]):") " record
+		if [[ -z "$record" ]]; then
+			error
+		else
+			if [[ "$record" == [Yy] ]]; then
+				domain_check
+				echo
+				echo
+				echo -e "$yellow 域名解析 = ${cyan}我确定已经有解析了$none"
+				echo "----------------------------------------------------------------"
+				echo
+				break
+			else
+				error
+			fi
+		fi
+
 	done
 
 	if [[ $v2ray_transport -ne 5 ]]; then
